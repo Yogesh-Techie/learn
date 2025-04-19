@@ -1,79 +1,72 @@
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
+
 metadata:
-name: yogesh
-region: ap-southeast-1
-version: "1.32"
-#IAM 
+  name: yogesh
+  region: ap-southeast-1
+  version: "1.32"
+
 iam:
-withOIDC: true
+  withOIDC: true
+
 privateCluster:
-enabled: true
-additionalEndpointServices:
+  enabled: true
+  additionalEndpointServices:
+    - "autoscaling"
 
-# For Cluster Autoscaler
-- "autoscaling"
 vpc:
-id: "vpc-04d249e3da0ab7d29" # (optional, must match VPC ID used for each subnet below)
-subnets:
-# must provide 'private' and/or 'public' subnets by availability zone as shown
-public:
-public-one:
-id: "subnet-06882b8514c158855"
-private:
-private-one:
-id: "subnet-076004e48b8440aa5"
+  id: "vpc-04d249e3da0ab7d29"
+  subnets:
+    public:
+      public-one:
+        id: "subnet-06882b8514c158855"
+    private:
+      private-one:
+        id: "subnet-076004e48b8440aa5"
 
-#node group 1
 managedNodeGroups:
-- name: mischief
-# ami:
-instanceType: t2.large
-desiredCapacity: 2
-minSize: 2
-maxSize: 5
-subnets:
-- private-one
-- private-two
-privateNetworking: true
-labels:
-nodegroup-type: frontend-app
-taints:
-- key: frontend
-value: "true"
-effect: NoSchedule
-volumeSize: 20
-volumeType: gp2
-updateConfig:
-maxUnavailable: 1
-iam:
-withAddonPolicies:
-autoScaler: true
-propagateASGTags: true
+  - name: mischief
+    instanceType: t2.large
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 5
+    subnets:
+      - private-one
+    privateNetworking: true
+    labels:
+      nodegroup-type: frontend-app
+    taints:
+      - key: frontend
+        value: "true"
+        effect: NoSchedule
+    volumeSize: 20
+    volumeType: gp2
+    updateConfig:
+      maxUnavailable: 1
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        propagateASGTags: true
 
-#node group 2
-managedNodeGroups:
-- name: mischief-2
-# ami:
-instanceType: t2.large
-desiredCapacity: 2
-minSize: 2
-maxSize: 7
-subnets:
-- private-one
-- private-two
-privateNetworking: true
-labels:
-nodegroup-type: backend-app
-taints:
-- key: backend
-value: "true"
-effect: NoSchedule
-volumeSize: 20
-volumeType: gp2
-updateConfig:
-maxUnavailable: 1
-iam:
-withAddonPolicies:
-autoScaler: true
-propagateASGTags: true
+  - name: mischief-2
+    instanceType: t2.large
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 7
+    subnets:
+      - private-one
+    privateNetworking: true
+    labels:
+      nodegroup-type: backend-app
+    taints:
+      - key: backend
+        value: "true"
+        effect: NoSchedule
+    volumeSize: 20
+    volumeType: gp2
+    updateConfig:
+      maxUnavailable: 1
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        propagateASGTags: true
